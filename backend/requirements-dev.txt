@@ -1,0 +1,23 @@
+# =============================================================================
+# SENTINEL Backend — Development Dependencies
+# =============================================================================
+# These are NOT installed in production.
+# Run: pip install -r requirements-dev.txt
+
+-r requirements.txt            # Include all production deps
+
+# ----- Testing -----
+pytest==8.2.0
+pytest-asyncio==0.23.6
+pytest-cov==5.0.0
+anyio==4.3.0                   # Async test utilities
+
+# ----- Code Quality -----
+ruff==0.4.4                    # Fast Python linter (replaces flake8, isort)
+black==24.4.2                  # Code formatter
+mypy==1.10.0                   # Static type checker
+sqlalchemy[mypy]==2.0.30       # SQLAlchemy mypy plugin
+
+# ----- Type Stubs -----
+types-passlib==1.7.7.20240327
+types-python-jose==3.3.4.20240106

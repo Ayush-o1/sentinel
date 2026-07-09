@@ -1,0 +1,36 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  transition: margin-left var(--transition-normal);
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-8);
+  padding-top: calc(var(--topnav-height) + var(--space-8));
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin: 0 auto;
+  animation: fade-in 250ms ease both;
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    margin-bottom: 64px; /* Bottom nav height on mobile */
+  }
+
+  .content {
+    padding: var(--space-4);
+    padding-top: calc(var(--topnav-height) + var(--space-4));
+  }
+}
