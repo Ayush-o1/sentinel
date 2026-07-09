@@ -8,7 +8,7 @@ Welcome to Project SENTINEL. This guide serves as the ultimate knowledge transfe
 
 SENTINEL is an enterprise-grade web application built to analyze and classify text messages (SMS, email, and raw text) to determine if they are legitimate ("HAM") or malicious/spam ("SPAM"). It is designed with a strong focus on cybersecurity, performance, and user experience.
 
-![Sentinel Landing Page](docs/assets/screenshots/landing-page.png)
+![Sentinel Landing Page](docs/assets/screenshots/01_landing_page.png)
 
 Unlike simple black-box classifiers, SENTINEL not only predicts if a message is spam, but it also provides **explainability**—highlighting the exact words (tokens) that contributed to the model's decision using LIME (Local Interpretable Model-agnostic Explanations).
 

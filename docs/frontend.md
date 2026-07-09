@@ -13,7 +13,7 @@ The frontend is a React 19 application built using Vite and TypeScript. It uses 
 Routing is handled by `react-router-dom` v6. 
 We utilize a `ProtectedRoute` wrapper component that inspects the Zustand authentication store. If a user is not authenticated, they are automatically redirected to `/login` with their intended destination captured in state.
 
-![Login Page](assets/screenshots/login-page.png)
+![Login Page](assets/screenshots/02_login_page.png)
 
 ## State Management
 - **Zustand**: Handles globally persistent, but relatively static state (e.g., Auth State). It is lightweight and prevents prop-drilling.

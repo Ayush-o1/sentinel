@@ -36,6 +36,12 @@ from nltk.tokenize import word_tokenize
 
 def _ensure_nltk_resources() -> None:
     """Download required NLTK datasets if not already present."""
+    import os
+    nltk_data_dir = "/tmp/nltk_data"
+    os.makedirs(nltk_data_dir, exist_ok=True)
+    if nltk_data_dir not in nltk.data.path:
+        nltk.data.path.append(nltk_data_dir)
+        
     resources = [
         ("tokenizers/punkt", "punkt"),
         ("tokenizers/punkt_tab", "punkt_tab"),
@@ -47,7 +53,7 @@ def _ensure_nltk_resources() -> None:
         try:
             nltk.data.find(path)
         except (LookupError, OSError):
-            nltk.download(package, quiet=True)
+            nltk.download(package, download_dir=nltk_data_dir, quiet=True)
 
 
 _ensure_nltk_resources()

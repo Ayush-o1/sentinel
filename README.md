@@ -11,7 +11,7 @@ SENTINEL is an enterprise-grade full-stack web application designed for intellig
 
 Unlike traditional black-box classifiers, SENTINEL utilizes [LIME (Local Interpretable Model-agnostic Explanations)](https://github.com/marcotcr/lime) to surface token-level attribution for every prediction, providing genuine insight into the model's reasoning.
 
-![Dashboard Overview](docs/assets/screenshots/dashboard.png)
+![Dashboard Overview](docs/assets/screenshots/03_dashboard.png)
 
 For a comprehensive technical overview and onboarding guide, please see the [PROJECT_GUIDE.md](PROJECT_GUIDE.md).
 
@@ -41,11 +41,11 @@ graph TD
 
 ### Analysis & LIME Explanation
 SENTINEL provides both high-level classification and detailed token-level explanations.
-![Analyze Message](docs/assets/screenshots/analyze-after.png)
+![Analyze Message](docs/assets/screenshots/05_analyze_after.png)
 
 ### Real-time Analytics
 Keep track of prediction volume and spam confidence distributions across your organization.
-![Analytics Dashboard](docs/assets/screenshots/analytics.png)
+![Analytics Dashboard](docs/assets/screenshots/07_analytics.png)
 
 ---
 
