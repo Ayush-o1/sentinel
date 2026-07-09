@@ -20,10 +20,15 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('recharts')) return 'charts';
+            if (id.includes('recharts') || id.includes('victory')) return 'charts';
             if (id.includes('framer-motion')) return 'motion';
             if (id.includes('@tanstack/react-query')) return 'query';
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) return 'vendor';
+            if (id.includes('zustand') || id.includes('axios')) return 'utils';
+            if (
+              id.includes('/react/') ||
+              id.includes('/react-dom/') ||
+              id.includes('react-router')
+            ) return 'vendor';
           }
         },
       },
