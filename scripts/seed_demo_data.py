@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.core.config import settings
 
-API_BASE = "http://localhost:8000/api/v1"
+API_BASE = "http://127.0.0.1:8000/api/v1"
 EMAIL = "demo_api@sentinel.app"
 PASSWORD = "Password123!"
 FULL_NAME = "API Demo User"
