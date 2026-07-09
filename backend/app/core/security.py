@@ -16,9 +16,10 @@ import hashlib
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any
+from typing import Any, Optional
 
-from jose import JWTError, jwt
+import jwt
+from jwt.exceptions import InvalidTokenError as JWTError
 from passlib.context import CryptContext
 
 from app.core.config import settings
@@ -59,7 +60,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # JWT Access Tokens
 # ---------------------------------------------------------------------------
 
-def create_access_token(subject: str, additional_claims: dict[str, Any] | None = None) -> str:
+def create_access_token(subject: str, additional_claims: Optional[dict[str, Any]] = None) -> str:
     """
     Create a signed JWT access token.
 

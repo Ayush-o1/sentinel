@@ -4,10 +4,12 @@ SENTINEL — Prediction ORM Model
 
 import uuid
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from datetime import datetime, timezone
+
+from sqlalchemy import DateTime, ForeignKey, JSON, Numeric, String, Text, Uuid as UUID
+from sqlalchemy.dialects.postgresql import INET, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
@@ -38,7 +40,7 @@ class Prediction(UUIDMixin, Base):
         nullable=False,
         index=True,
     )
-    model_version_id: Mapped[uuid.UUID | None] = mapped_column(
+    model_version_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("model_versions.id", ondelete="SET NULL"),
         nullable=True,
@@ -73,27 +75,22 @@ class Prediction(UUIDMixin, Base):
     # Explainability
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
     suspicious_tokens: Mapped[list[dict[str, Any]]] = mapped_column(
-        JSONB,
+        JSON().with_variant(JSONB(), "postgresql"),
         nullable=False,
         default=list,
         comment="[{token: str, weight: float}, ...]",
     )
 
-    # Timestamp (created only — predictions are immutable)
-    from datetime import datetime, timezone
-    from sqlalchemy import text
-    from sqlalchemy import DateTime
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        server_default=text("NOW()"),
         nullable=False,
         index=True,
     )
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="predictions")
-    model_version: Mapped["ModelVersion | None"] = relationship(
+    model_version: Mapped[Optional["ModelVersion"]] = relationship(
         "ModelVersion", back_populates="predictions"
     )
 

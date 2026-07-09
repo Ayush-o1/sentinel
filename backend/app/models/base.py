@@ -9,7 +9,7 @@ to avoid repetition across models.
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, text
+from sqlalchemy import JSON, String, DateTime, text, Uuid as UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, MappedColumn, mapped_column
 
 
@@ -28,7 +28,6 @@ class UUIDMixin:
     id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("gen_random_uuid()"),
     )
 
 
@@ -43,13 +42,11 @@ class TimestampMixin:
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        server_default=text("NOW()"),
         nullable=False,
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        server_default=text("NOW()"),
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
     )

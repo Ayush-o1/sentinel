@@ -46,7 +46,7 @@ def _ensure_nltk_resources() -> None:
     for path, package in resources:
         try:
             nltk.data.find(path)
-        except LookupError:
+        except (LookupError, OSError):
             nltk.download(package, quiet=True)
 
 

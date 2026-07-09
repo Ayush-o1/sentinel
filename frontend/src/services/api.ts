@@ -8,7 +8,7 @@
  * - Standardized error handling
  */
 
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import type { TokenResponse } from '../types';
 
 // ---------------------------------------------------------------------------

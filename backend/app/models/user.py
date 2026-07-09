@@ -3,9 +3,9 @@ SENTINEL — User ORM Model
 """
 
 import uuid
-from typing import TYPE_CHECKING, List
+from typing import Optional, TYPE_CHECKING, List
 
-from sqlalchemy import Boolean, String
+from sqlalchemy import JSON, Boolean, String, Uuid as UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin

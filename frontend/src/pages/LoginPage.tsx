@@ -1,6 +1,5 @@
 /**
  * SENTINEL — Login Page
- * Full implementation to be completed in Phase 3 (Frontend Polish)
  */
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';

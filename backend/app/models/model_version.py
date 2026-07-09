@@ -5,13 +5,12 @@ SENTINEL — ModelVersion ORM Model
 import uuid
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Boolean, Date, DateTime, Integer, Numeric, String, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import JSON, Boolean, Date, DateTime, Integer, Numeric, String, text, Uuid as UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
-from typing import TYPE_CHECKING, List
+from typing import Optional, TYPE_CHECKING, List
 if TYPE_CHECKING:
     from app.models.prediction import Prediction
 
@@ -34,7 +33,6 @@ class ModelVersion(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("gen_random_uuid()"),
     )
     version: Mapped[str] = mapped_column(
         String(20),
@@ -67,7 +65,6 @@ class ModelVersion(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        server_default=text("NOW()"),
         nullable=False,
     )
 

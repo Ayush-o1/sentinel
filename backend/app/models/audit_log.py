@@ -4,10 +4,10 @@ SENTINEL — AuditLog ORM Model
 
 import uuid
 from datetime import datetime, timezone
-from typing import Any
+from typing import Optional, Any, Optional
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, text
-from sqlalchemy.dialects.postgresql import INET, JSONB, UUID
+from sqlalchemy import DateTime, ForeignKey, JSON, String, Text, text, Uuid as UUID
+from sqlalchemy.dialects.postgresql import INET, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
@@ -31,10 +31,9 @@ class AuditLog(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("gen_random_uuid()"),
     )
     # Nullable: events like failed login attempts may have no valid user_id
-    user_id: Mapped[uuid.UUID | None] = mapped_column(
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
@@ -46,29 +45,28 @@ class AuditLog(Base):
         index=True,
         comment="'LOGIN' | 'LOGOUT' | 'REGISTER' | 'PREDICT' | 'DELETE_PREDICTION' | ...",
     )
-    resource_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    resource_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
-    ip_address: Mapped[str | None] = mapped_column(
-        INET,
+    resource_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    resource_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(
+        String(45).with_variant(INET(), "postgresql"),
         nullable=True,
         comment="Client IP (INET type for both IPv4 and IPv6)",
     )
-    user_agent: Mapped[str | None] = mapped_column(Text, nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(
         String(10),
         nullable=False,
         comment="'SUCCESS' | 'FAILURE'",
     )
-    metadata_: Mapped[dict[str, Any] | None] = mapped_column(
+    metadata_: Mapped[Optional[dict[str, Any]]] = mapped_column(
         "metadata",
-        JSONB,
+        JSON().with_variant(JSONB(), "postgresql"),
         nullable=True,
         comment="Additional context (error message, changed fields, etc.)",
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        server_default=text("NOW()"),
         nullable=False,
         index=True,
     )

@@ -5,7 +5,7 @@
 # Run: pip install -r requirements.txt
 
 # ----- Web Framework -----
-fastapi==0.111.0
+fastapi==0.109.2
 uvicorn[standard]==0.30.1      # ASGI server with uvloop + httptools
 
 # ----- Database -----
@@ -14,8 +14,9 @@ asyncpg==0.29.0                # Async PostgreSQL driver
 alembic==1.13.1                # Database migrations
 
 # ----- Authentication -----
-passlib[bcrypt]==1.7.4         # Password hashing (bcrypt backend)
-python-jose[cryptography]==3.3.0  # JWT encoding/decoding
+passlib==1.7.4                 # Password hashing
+bcrypt==3.2.2                  # Pin bcrypt to 3.2.2 to fix passlib bug
+PyJWT==2.8.0                   # JWT encoding/decoding
 
 # ----- Validation & Serialization -----
 pydantic==2.7.1                # Data validation (FastAPI uses this natively)

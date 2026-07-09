@@ -10,7 +10,7 @@ Design:
 """
 
 import uuid
-from typing import Generic, List, Optional, Type, TypeVar
+from typing import Generic, List, Optional, Type, TypeVar, Union
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,7 +34,7 @@ class BaseRepository(Generic[ModelT]):
         self._model = model
         self._db = db
 
-    async def get_by_id(self, record_id: uuid.UUID | str) -> Optional[ModelT]:
+    async def get_by_id(self, record_id: Union[uuid.UUID, str]) -> Optional[ModelT]:
         """Fetch a single record by primary key. Returns None if not found."""
         if isinstance(record_id, str):
             record_id = uuid.UUID(record_id)

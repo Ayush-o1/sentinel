@@ -44,11 +44,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # ---- STARTUP ----
     logger.info("sentinel.startup", version=settings.APP_VERSION, env=settings.APP_ENV)
 
-    # Create tables in development (production uses Alembic migrations)
-    if settings.APP_ENV == "development":
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        logger.info("sentinel.startup.db_tables_created")
+    # Removed Base.metadata.create_all even for development.
+    # Relying exclusively on Alembic migrations prevents schema drift
+    # and avoids conflicts ('relation already exists') when transitioning to production.
 
     # Load the ML model into application state (once, at startup)
     from app.ml.model import MLModel

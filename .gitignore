@@ -68,8 +68,7 @@ frontend/.env
 # Dataset files (can be large)
 ml/data/raw/
 ml/data/processed/
-# Trained model files (regenerated via training script)
-backend/app/ml/models/*.joblib
+# Trained model files
 backend/app/ml/models/*.pkl
 # Keep the .gitkeep placeholder
 !backend/app/ml/models/.gitkeep

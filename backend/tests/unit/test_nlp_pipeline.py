@@ -21,20 +21,20 @@ class TestNLPPipeline:
 
     def test_url_replacement(self):
         result = preprocess("Click here to claim your prize: https://spam.example.com/win")
-        assert "url_token" in result["processed_text"]
+        assert "URL_TOKEN" in result["processed_text"]
         assert "spam.example.com" not in result["processed_text"]
 
     def test_email_replacement(self):
         result = preprocess("Send your details to scammer@badactor.com immediately")
-        assert "email_token" in result["processed_text"]
+        assert "EMAIL_TOKEN" in result["processed_text"]
 
     def test_phone_replacement(self):
         result = preprocess("Call us now at 555-123-4567 for a free prize!")
-        assert "phone_token" in result["processed_text"]
+        assert "PHONE_TOKEN" in result["processed_text"]
 
     def test_number_replacement(self):
         result = preprocess("You have won 5000 dollars in the lottery")
-        assert "number_token" in result["processed_text"]
+        assert "NUMBER_TOKEN" in result["processed_text"]
 
     def test_spam_signal_words_preserved(self):
         """Words like 'free', 'win', 'prize' must NOT be removed as stopwords."""

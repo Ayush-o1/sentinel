@@ -10,8 +10,9 @@ Endpoints:
 """
 
 from datetime import timedelta
+from typing import Optional
 
-from fastapi import APIRouter, Cookie, Response, status
+from fastapi import APIRouter, Cookie, Request, Response, status
 
 from app.core.config import settings
 from app.core.dependencies import CurrentUser, DbSession
@@ -62,13 +63,10 @@ def _clear_refresh_cookie(response: Response) -> None:
 )
 @limiter.limit(settings.RATE_LIMIT_REGISTER)
 async def register(
+    request: Request,
     request_data: RegisterRequest,
     db: DbSession,
-    # NOTE: `request` is injected automatically by slowapi's limiter decorator
-    # It must be the first positional param after the decorator for slowapi to work.
-    # We import Request below to satisfy this requirement.
 ):
-    from fastapi import Request as _Req  # local import to avoid circular issue
     service = AuthService(db)
     return await service.register(request_data)
 
@@ -80,6 +78,7 @@ async def register(
 )
 @limiter.limit(settings.RATE_LIMIT_LOGIN)
 async def login(
+    request: Request,
     request_data: LoginRequest,
     response: Response,
     db: DbSession,
@@ -101,7 +100,7 @@ async def login(
 async def refresh(
     response: Response,
     db: DbSession,
-    refresh_token: str | None = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
+    refresh_token: Optional[str] = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
 ):
     if not refresh_token:
         raise AuthenticationError("Refresh token is missing.")
@@ -121,7 +120,7 @@ async def logout(
     response: Response,
     db: DbSession,
     current_user: CurrentUser,
-    refresh_token: str | None = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
+    refresh_token: Optional[str] = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
 ):
     if refresh_token:
         service = AuthService(db)

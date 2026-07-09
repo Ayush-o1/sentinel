@@ -68,6 +68,12 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     via FastAPI's dependency override mechanism.
     """
     app = create_application()
+    app.state.limiter.enabled = False
+    
+    # Load ML model for tests since ASGITransport doesn't trigger lifespan
+    from app.ml.model import MLModel
+    app.state.ml_model = MLModel()
+    await app.state.ml_model.load()
 
     async def override_get_db():
         yield test_db

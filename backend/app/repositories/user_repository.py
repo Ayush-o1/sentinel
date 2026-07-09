@@ -3,7 +3,7 @@ SENTINEL — User Repository
 """
 
 import uuid
-from typing import Optional
+from typing import Optional, Union
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,7 +30,7 @@ class UserRepository(BaseRepository[User]):
         )
         return result.scalar_one_or_none()
 
-    async def get_by_id(self, user_id: uuid.UUID | str) -> Optional[User]:
+    async def get_by_id(self, user_id: Union[uuid.UUID, str]) -> Optional[User]:
         """Fetch user by UUID. Overrides base to accept string UUIDs."""
         if isinstance(user_id, str):
             user_id = uuid.UUID(user_id)

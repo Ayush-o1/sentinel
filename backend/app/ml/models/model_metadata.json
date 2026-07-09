@@ -1,0 +1,9 @@
+{
+    "version": "1.0.0",
+    "algorithm": "Linear SVM (Calibrated)",
+    "training_samples": 4457,
+    "accuracy": 0.9874439461883409,
+    "precision": 0.972027972027972,
+    "recall": 0.9328859060402684,
+    "f1": 0.952054794520548
+}

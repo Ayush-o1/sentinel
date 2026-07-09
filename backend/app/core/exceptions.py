@@ -19,7 +19,7 @@ Response envelope:
     }
 """
 
-from typing import Any
+from typing import Any, Optional
 
 import structlog
 from fastapi import FastAPI, Request, status
@@ -41,7 +41,7 @@ class SentinelBaseException(Exception):
         message: str,
         code: str = "INTERNAL_ERROR",
         status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR,
-        details: dict[str, Any] | None = None,
+        details: Optional[dict[str, Any]] = None,
     ) -> None:
         super().__init__(message)
         self.message = message
@@ -75,7 +75,7 @@ class AuthorizationError(SentinelBaseException):
 class NotFoundError(SentinelBaseException):
     """Raised when a requested resource does not exist."""
 
-    def __init__(self, resource: str, identifier: str | None = None) -> None:
+    def __init__(self, resource: str, identifier: Optional[str] = None) -> None:
         message = f"{resource} not found."
         if identifier:
             message = f"{resource} '{identifier}' not found."
@@ -100,7 +100,7 @@ class ConflictError(SentinelBaseException):
 class ValidationError(SentinelBaseException):
     """Raised for domain-level validation failures (distinct from Pydantic validation)."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
+    def __init__(self, message: str, details: Optional[dict[str, Any]] = None) -> None:
         super().__init__(
             message=message,
             code="VALIDATION_ERROR",
@@ -128,7 +128,7 @@ def _error_response(
     status_code: int,
     code: str,
     message: str,
-    details: dict[str, Any] | None = None,
+    details: Optional[dict[str, Any]] = None,
 ) -> JSONResponse:
     """Build a standardized JSON error response."""
     content: dict[str, Any] = {
