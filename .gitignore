@@ -125,3 +125,4 @@ backend/logs/
 .cache/
 tmp/
 temp/
+venv312/
