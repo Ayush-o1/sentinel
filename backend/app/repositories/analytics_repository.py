@@ -9,7 +9,7 @@ import uuid
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List
 
-from sqlalchemy import cast, func, select, text
+from sqlalchemy import cast, func, select, text, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -30,7 +30,7 @@ class AnalyticsRepository:
             select(
                 func.count().label("total"),
                 func.sum(
-                    func.cast(Prediction.verdict == "SPAM", Prediction.verdict.__class__)
+                    cast(Prediction.verdict == "SPAM", Integer)
                 ).label("spam_count"),
                 func.avg(Prediction.confidence).label("avg_confidence"),
             ).where(Prediction.user_id == user_id)
@@ -84,10 +84,10 @@ class AnalyticsRepository:
             select(
                 func.date(Prediction.created_at).label("date"),
                 func.sum(
-                    func.cast(Prediction.verdict == "SPAM", Prediction.verdict.__class__)
+                    cast(Prediction.verdict == "SPAM", Integer)
                 ).label("spam"),
                 func.sum(
-                    func.cast(Prediction.verdict == "HAM", Prediction.verdict.__class__)
+                    cast(Prediction.verdict == "HAM", Integer)
                 ).label("ham"),
                 func.count().label("total"),
             )

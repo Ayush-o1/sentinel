@@ -72,7 +72,18 @@ Fetches a paginated history of the user's predictions.
 }
 ```
 
-#### `GET /api/v1/predictions/analytics`
-Fetches aggregated statistics for the Analytics dashboard charts.
+#### `GET /api/v1/analytics/summary`
+Fetches aggregated statistics for the Analytics dashboard summary metrics.
 - **Requires**: Bearer Token.
-- **Response**: `200 OK` containing total counts, average confidence, spam vs ham ratios, and timeline aggregations.
+- **Response**: `200 OK` containing total counts, average confidence, spam vs ham ratios, and top spam tokens.
+
+#### `GET /api/v1/analytics/timeline`
+Fetches timeline data for prediction volume over a specified period.
+- **Requires**: Bearer Token.
+- **Query Params**: `period` (default "30d", accepts "7d", "30d", "90d").
+- **Response**: `200 OK` containing daily totals of spam and ham.
+
+#### `GET /api/v1/analytics/confidence-distribution`
+Fetches confidence score distribution for histogram generation.
+- **Requires**: Bearer Token.
+- **Response**: `200 OK` containing histogram buckets for prediction confidence.
