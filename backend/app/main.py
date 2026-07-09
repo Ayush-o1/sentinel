@@ -11,8 +11,8 @@ Architecture note:
     can create a fresh app instance) and avoids circular import issues.
 """
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 import structlog
 from fastapi import FastAPI
@@ -27,7 +27,6 @@ from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.core.limiter import limiter
 from app.db.session import engine
-from app.models.base import Base
 
 logger = structlog.get_logger(__name__)
 

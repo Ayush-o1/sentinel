@@ -13,11 +13,11 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-# Import settings to build the database URL from env vars
-from app.core.config import settings
-
 # Import all models to ensure they are registered with Base.metadata
 import app.models  # noqa: F401 — Side-effect import (registers all models)
+
+# Import settings to build the database URL from env vars
+from app.core.config import settings
 from app.models.base import Base
 
 # Alembic Config object (provides access to alembic.ini)
