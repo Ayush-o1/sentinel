@@ -10,7 +10,6 @@ Endpoints:
 """
 
 from datetime import timedelta
-from typing import Optional
 
 from fastapi import APIRouter, Cookie, Request, Response, status
 
@@ -18,7 +17,13 @@ from app.core.config import settings
 from app.core.dependencies import CurrentUser, DbSession
 from app.core.exceptions import AuthenticationError
 from app.core.limiter import limiter
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserProfileResponse, UserResponse
+from app.schemas.auth import (
+    LoginRequest,
+    RegisterRequest,
+    TokenResponse,
+    UserProfileResponse,
+    UserResponse,
+)
 from app.services.auth_service import AuthService
 
 router = APIRouter()
@@ -41,7 +46,7 @@ def _set_refresh_cookie(response: Response, raw_token: str) -> None:
         value=raw_token,
         httponly=True,
         secure=settings.is_production,  # HTTPS only in production
-        samesite="lax",
+        samesite="strict",  # Matches documented security model (docs/security.md)
         max_age=max_age,
         path=REFRESH_TOKEN_COOKIE_PATH,
     )
@@ -100,7 +105,7 @@ async def login(
 async def refresh(
     response: Response,
     db: DbSession,
-    refresh_token: Optional[str] = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
+    refresh_token: str | None = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
 ):
     if not refresh_token:
         raise AuthenticationError("Refresh token is missing.")
@@ -120,7 +125,7 @@ async def logout(
     response: Response,
     db: DbSession,
     current_user: CurrentUser,
-    refresh_token: Optional[str] = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
+    refresh_token: str | None = Cookie(default=None, alias=REFRESH_TOKEN_COOKIE),
 ):
     if refresh_token:
         service = AuthService(db)

@@ -3,20 +3,20 @@ SENTINEL — Prediction ORM Model
 """
 
 import uuid
+from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
-from datetime import datetime, timezone
-
-from sqlalchemy import DateTime, ForeignKey, JSON, Numeric, String, Text, Uuid as UUID
-from sqlalchemy.dialects.postgresql import INET, JSONB
+from sqlalchemy import JSON, DateTime, ForeignKey, Numeric, String, Text
+from sqlalchemy import Uuid as UUID
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin, UUIDMixin
+from app.models.base import Base, UUIDMixin
 
 if TYPE_CHECKING:
-    from app.models.user import User
     from app.models.model_version import ModelVersion
+    from app.models.user import User
 
 
 class Prediction(UUIDMixin, Base):
@@ -40,7 +40,7 @@ class Prediction(UUIDMixin, Base):
         nullable=False,
         index=True,
     )
-    model_version_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    model_version_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("model_versions.id", ondelete="SET NULL"),
         nullable=True,
@@ -83,7 +83,7 @@ class Prediction(UUIDMixin, Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
         index=True,
     )

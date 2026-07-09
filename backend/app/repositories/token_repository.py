@@ -3,8 +3,7 @@ SENTINEL — Refresh Token Repository
 """
 
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,7 +31,7 @@ class TokenRepository(BaseRepository[RefreshToken]):
         Returns:
             The newly created RefreshToken record.
         """
-        expires_at = datetime.now(timezone.utc) + timedelta(
+        expires_at = datetime.now(UTC) + timedelta(
             days=settings.REFRESH_TOKEN_EXPIRE_DAYS
         )
         token = RefreshToken(
@@ -42,7 +41,7 @@ class TokenRepository(BaseRepository[RefreshToken]):
         )
         return await self.save(token)
 
-    async def get_by_raw_token(self, raw_token: str) -> Optional[RefreshToken]:
+    async def get_by_raw_token(self, raw_token: str) -> RefreshToken | None:
         """
         Look up a refresh token by its plain-text value.
 
@@ -57,7 +56,7 @@ class TokenRepository(BaseRepository[RefreshToken]):
 
     async def revoke(self, token: RefreshToken) -> None:
         """Mark a refresh token as revoked (soft delete)."""
-        token.revoked_at = datetime.now(timezone.utc)
+        token.revoked_at = datetime.now(UTC)
         await self._db.flush()
 
     async def delete_for_user(self, user_id: uuid.UUID) -> None:
@@ -81,7 +80,7 @@ class TokenRepository(BaseRepository[RefreshToken]):
         Returns:
             The number of records deleted.
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         result = await self._db.execute(
             delete(RefreshToken).where(
                 RefreshToken.expires_at < now,

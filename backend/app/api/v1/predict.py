@@ -4,14 +4,14 @@ SENTINEL — Prediction Router
 POST /api/v1/predict — Analyze a message
 """
 
-import uuid
+
 
 from fastapi import APIRouter, Request, status
 
 from app.core.config import settings
 from app.core.dependencies import CurrentUser, DbSession
 from app.core.limiter import limiter
-from app.schemas.prediction import PredictRequest, PredictionResponse
+from app.schemas.prediction import PredictionResponse, PredictRequest
 from app.services.prediction_service import PredictionService
 
 router = APIRouter()

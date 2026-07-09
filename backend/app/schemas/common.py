@@ -6,7 +6,7 @@ Shared schema components used across multiple features:
 - Standard success responses
 """
 
-from typing import Generic, List, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
@@ -16,7 +16,7 @@ DataT = TypeVar("DataT")
 class PaginatedResponse(BaseModel, Generic[DataT]):
     """Generic paginated list response envelope."""
 
-    items: List[DataT]
+    items: list[DataT]
     total: int
     page: int
     page_size: int

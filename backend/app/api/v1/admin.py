@@ -1,14 +1,16 @@
 """
 SENTINEL — Admin Router (Role: admin only)
 
-GET /api/v1/admin/users         — List all users
-GET /api/v1/admin/predictions   — List all predictions
-GET /api/v1/admin/analytics/global — Platform-wide stats
+GET /api/v1/admin/users             — List all users (paginated)
+GET /api/v1/analytics/global        — Platform-wide aggregate stats
 """
+
+import math
 
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import AdminUser, DbSession
+from app.repositories.admin_repository import AdminRepository
 from app.schemas.auth import UserResponse
 from app.schemas.common import PaginatedResponse
 
@@ -26,16 +28,8 @@ async def list_users(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
 ) -> PaginatedResponse[UserResponse]:
-    import math
-    from sqlalchemy import func, select
-    from app.models.user import User
-
-    count_result = await db.execute(select(func.count()).select_from(User))
-    total = count_result.scalar() or 0
-
-    offset = (page - 1) * page_size
-    result = await db.execute(select(User).limit(page_size).offset(offset))
-    users = list(result.scalars().all())
+    repo = AdminRepository(db)
+    users, total = await repo.get_paginated_users(page=page, page_size=page_size)
 
     return PaginatedResponse(
         items=[UserResponse.model_validate(u) for u in users],
@@ -54,24 +48,5 @@ async def global_analytics(
     admin: AdminUser,
     db: DbSession,
 ) -> dict:
-    from sqlalchemy import func, select
-    from app.models.prediction import Prediction
-    from app.models.user import User
-
-    pred_count = await db.execute(select(func.count()).select_from(Prediction))
-    user_count = await db.execute(select(func.count()).select_from(User))
-    spam_count = await db.execute(
-        select(func.count()).where(Prediction.verdict == "SPAM")
-    )
-
-    total_preds = pred_count.scalar() or 0
-    total_users = user_count.scalar() or 0
-    total_spam = spam_count.scalar() or 0
-
-    return {
-        "total_users": total_users,
-        "total_predictions": total_preds,
-        "total_spam": total_spam,
-        "total_ham": total_preds - total_spam,
-        "global_spam_rate": round(total_spam / total_preds, 4) if total_preds > 0 else 0.0,
-    }
+    repo = AdminRepository(db)
+    return await repo.get_global_stats()

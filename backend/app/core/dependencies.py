@@ -15,10 +15,11 @@ Usage in route handlers:
         ...
 """
 
-from typing import Annotated, AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
+from typing import Annotated
 
 import structlog
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.exceptions import InvalidTokenError as JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -68,7 +69,7 @@ DbSession = Annotated[AsyncSession, Depends(get_db)]
 
 async def get_current_user(
     db: DbSession,
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
 ) -> User:
     """
     Extract and validate the JWT from the Authorization header.
@@ -91,12 +92,12 @@ async def get_current_user(
 
     try:
         payload = decode_access_token(credentials.credentials)
-        user_id: Optional[str] = payload.get("sub")
+        user_id: str | None = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
         logger.warning("sentinel.auth.invalid_token")
-        raise credentials_exception
+        raise credentials_exception from None
 
     # Import here to avoid circular dependency with user model
     from app.repositories.user_repository import UserRepository
