@@ -1,11 +1,12 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
   animation: fade-in 300ms ease;
 }
 
-.header {
+/* ── Filter Row ───────────────────────────────────────────────── */
+.filterRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -13,19 +14,22 @@
   gap: var(--space-4);
 }
 
-.title {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-}
-
 .filters {
   display: flex;
   gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.selectWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .select {
-  padding: var(--space-2) var(--space-4);
+  appearance: none;
+  -webkit-appearance: none;
+  padding: var(--space-2) var(--space-8) var(--space-2) var(--space-4);
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -33,19 +37,36 @@
   font-size: var(--font-size-sm);
   outline: none;
   cursor: pointer;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-family: var(--font-sans);
+  min-width: 130px;
 }
 
-.select:focus, .select:hover {
+.select:focus,
+.select:hover {
   border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.08);
 }
 
-/* Table */
+.selectArrow {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.recordCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── Table Container ──────────────────────────────────────────── */
 .tableContainer {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  overflow-x: auto; /* Horizontal scroll on small screens */
+  overflow-x: auto;
 }
 
 .table {
@@ -55,14 +76,15 @@
 }
 
 .table th {
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border-bottom: 1px solid var(--color-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
 }
 
 .table td {
@@ -76,10 +98,20 @@
   border-bottom: none;
 }
 
-.table tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+.table tbody tr:not(.confirmRow):hover {
+  background: rgba(0, 212, 255, 0.02);
 }
 
+.table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+/* Row being confirmed for deletion */
+.rowConfirming {
+  background: rgba(255, 51, 102, 0.04) !important;
+}
+
+/* ── Cell Styles ──────────────────────────────────────────────── */
 .cellDate {
   color: var(--color-text-secondary);
   font-family: var(--font-mono);
@@ -88,16 +120,17 @@
 }
 
 .cellType {
-  width: 80px;
+  width: 70px;
 }
 
 .typeTag {
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   letter-spacing: 0.05em;
+  font-family: var(--font-mono);
 }
 
 .cellPreview {
@@ -114,12 +147,13 @@
 }
 
 .verdictBadge {
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .badgeSpam {
@@ -136,14 +170,16 @@
 
 .cellConfidence {
   font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .colActions {
   text-align: right;
-  width: 60px;
+  width: 56px;
 }
 
+/* ── Delete Button ────────────────────────────────────────────── */
 .btnDelete {
   color: var(--color-text-muted);
   padding: var(--space-2);
@@ -160,35 +196,145 @@
 }
 
 .btnDelete:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* Empty States */
-.emptyCell {
-  text-align: center;
-  color: var(--color-text-muted);
-  padding: var(--space-8) !important;
+.deleteSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--space-2);
 }
 
-.emptyCellError {
-  text-align: center;
+.miniSpinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent-danger);
+  border-radius: 50%;
+  animation: spin-smooth 0.7s linear infinite;
+}
+
+/* ── Inline Confirm Row ───────────────────────────────────────── */
+.confirmRow td {
+  padding: 0 !important;
+  border-bottom: 1px solid rgba(255, 51, 102, 0.2) !important;
+}
+
+.confirmContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 51, 102, 0.08);
   color: var(--color-accent-danger);
-  padding: var(--space-8) !important;
+  animation: bounce-in 200ms ease;
 }
 
-/* Pagination */
+.confirmText {
+  font-size: var(--font-size-sm);
+  flex: 1;
+}
+
+.confirmActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.btnConfirmDelete {
+  padding: var(--space-1) var(--space-4);
+  background: rgba(255, 51, 102, 0.2);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  color: var(--color-accent-danger);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  transition: background var(--transition-fast);
+}
+
+.btnConfirmDelete:hover:not(:disabled) {
+  background: rgba(255, 51, 102, 0.3);
+}
+
+.btnConfirmDelete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnCancelDelete {
+  padding: var(--space-1) var(--space-4);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.btnCancelDelete:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+}
+
+.btnCancelDelete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Skeleton ─────────────────────────────────────────────────── */
+.skeletonRow td {
+  padding: var(--space-4) var(--space-4);
+}
+
+.skeletonCell {
+  height: 16px;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+/* ── Empty & Error States ─────────────────────────────────────── */
+.emptyCell, .emptyCellError {
+  padding: var(--space-12) var(--space-8) !important;
+  text-align: center;
+}
+
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.emptyCell .emptyContent {
+  color: var(--color-text-muted);
+}
+
+.emptyCellError .emptyContent {
+  color: var(--color-accent-danger);
+}
+
+.emptyCta {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent-primary);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-2);
+}
+
+/* ── Pagination ───────────────────────────────────────────────── */
 .pagination {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: var(--space-4);
-  margin-top: var(--space-2);
 }
 
 .pageInfo {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  font-family: var(--font-mono);
 }
 
 .btnPage {
@@ -207,6 +353,6 @@
 }
 
 .btnPage:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
