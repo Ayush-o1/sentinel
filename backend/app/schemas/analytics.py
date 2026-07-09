@@ -2,7 +2,6 @@
 SENTINEL — Analytics Pydantic Schemas
 """
 
-from typing import List
 
 from pydantic import BaseModel
 
@@ -17,7 +16,7 @@ class AnalyticsSummary(BaseModel):
     avg_confidence: float
     high_confidence_spam: int
     predictions_today: int
-    most_common_spam_tokens: List[str]
+    most_common_spam_tokens: list[str]
 
 
 class TimelineDataPoint(BaseModel):
@@ -31,7 +30,7 @@ class TimelineDataPoint(BaseModel):
 
 class TimelineResponse(BaseModel):
     period: str
-    data: List[TimelineDataPoint]
+    data: list[TimelineDataPoint]
 
 
 class ConfidenceBucket(BaseModel):
@@ -42,7 +41,7 @@ class ConfidenceBucket(BaseModel):
 
 
 class ConfidenceDistributionResponse(BaseModel):
-    buckets: List[ConfidenceBucket]
+    buckets: list[ConfidenceBucket]
 
 
 class ModelInfoResponse(BaseModel):

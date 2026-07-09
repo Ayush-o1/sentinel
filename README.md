@@ -2,11 +2,40 @@
 
 **AI-Powered Spam Detection & Threat Intelligence Platform**
 
+[![Build Status](https://img.shields.io/badge/build-passing-success?style=flat-square)](#)
+[![Python Version](https://img.shields.io/badge/python-3.11-blue?style=flat-square&logo=python)](#)
+[![React Version](https://img.shields.io/badge/react-19-61dafb?style=flat-square&logo=react)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
 SENTINEL is an enterprise-grade full-stack web application designed for intelligent spam detection and classification. Combining a modern Natural Language Processing (NLP) pipeline with a calibrated Machine Learning model, the system classifies SMS, email, and plain text messages as legitimate or malicious.
 
 Unlike traditional black-box classifiers, SENTINEL utilizes [LIME (Local Interpretable Model-agnostic Explanations)](https://github.com/marcotcr/lime) to surface token-level attribution for every prediction, providing genuine insight into the model's reasoning.
 
 For a comprehensive technical overview and onboarding guide, please see the [PROJECT_GUIDE.md](PROJECT_GUIDE.md).
+
+---
+
+## System Architecture
+
+```mermaid
+graph TD
+    Client[Web Browser] -->|REST API / JWT| FastAPI[FastAPI Backend]
+    
+    subgraph Backend Services
+        FastAPI --> Predict[Prediction Service]
+        FastAPI --> Auth[Auth Service]
+        FastAPI --> Analytics[Analytics Service]
+    end
+    
+    Predict -->|Preprocess| NLP[NLP Pipeline]
+    NLP -->|Extract Features| TFIDF[TF-IDF Vectorizer]
+    TFIDF -->|Classify| SVM[Calibrated LinearSVC]
+    SVM -->|Explain| LIME[LIME Explainer]
+    
+    Predict -->|Persist| PG[(PostgreSQL 15)]
+    Auth -->|Session Data| PG
+    Analytics -->|Aggregations| PG
+```
 
 ---
 
@@ -72,6 +101,12 @@ The application will be accessible at:
 - **Swagger Documentation:** `http://localhost:8000/docs`
 
 For manual local setup without Docker, please refer to the [Developer Guide](docs/developer-guide.md).
+
+---
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to set up your environment, run tests, and submit Pull Requests.
 
 ---
 

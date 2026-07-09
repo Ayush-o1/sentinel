@@ -2,10 +2,9 @@
 SENTINEL — User ORM Model
 """
 
-import uuid
-from typing import Optional, TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, Boolean, String, Uuid as UUID
+from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
@@ -35,9 +34,9 @@ class User(UUIDMixin, TimestampMixin, Base):
     )
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
     hashed_password: Mapped[str] = mapped_column(
-        String(60),
+        String(72),
         nullable=False,
-        comment="bcrypt hash, always 60 chars",
+        comment="bcrypt hash, always 60 chars for 2a but up to 72 for 2b/2y variants",
     )
     role: Mapped[str] = mapped_column(
         String(20),
@@ -53,13 +52,13 @@ class User(UUIDMixin, TimestampMixin, Base):
     )
 
     # Relationships
-    predictions: Mapped[List["Prediction"]] = relationship(
+    predictions: Mapped[list["Prediction"]] = relationship(
         "Prediction",
         back_populates="user",
         cascade="all, delete-orphan",
         lazy="select",
     )
-    refresh_tokens: Mapped[List["RefreshToken"]] = relationship(
+    refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
         "RefreshToken",
         back_populates="user",
         cascade="all, delete-orphan",

@@ -10,9 +10,8 @@ Pattern:
 """
 
 from functools import lru_cache
-from typing import List
 
-from pydantic import PostgresDsn, field_validator, model_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -59,10 +58,12 @@ class Settings(BaseSettings):
     DATABASE_URL: str = ""
 
     # ---- CORS ----
-    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 
     # ---- Production Security ----
-    ALLOWED_HOSTS: List[str] = ["*"]
+    # IMPORTANT: In production, set ALLOWED_HOSTS to your actual domain(s).
+    # Example: ALLOWED_HOSTS=["api.yourdomain.com", "yourdomain.com"]
+    ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
 
     # ---- Rate Limiting ----
     RATE_LIMIT_PREDICT: str = "30/minute"
@@ -76,7 +77,7 @@ class Settings(BaseSettings):
     @field_validator("APP_ENV")
     @classmethod
     def validate_app_env(cls, v: str) -> str:
-        allowed = {"development", "staging", "production"}
+        allowed = {"development", "staging", "production", "testing"}
         if v not in allowed:
             raise ValueError(f"APP_ENV must be one of {allowed}, got '{v}'")
         return v

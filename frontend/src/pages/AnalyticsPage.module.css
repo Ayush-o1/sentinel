@@ -5,18 +5,13 @@
   animation: fade-in 300ms ease;
 }
 
+/* ── Header ───────────────────────────────────────────────────── */
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-4);
-}
-
-.title {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
 }
 
 .periodSelector {
@@ -28,12 +23,15 @@
 }
 
 .periodBtn {
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-5);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
   background: transparent;
   transition: all var(--transition-fast);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  border: none;
 }
 
 .periodBtn:hover:not(.periodActive) {
@@ -43,11 +41,11 @@
 
 .periodActive {
   background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-  box-shadow: inset 0 0 0 1px var(--color-border-focus);
+  color: var(--color-accent-primary);
+  box-shadow: inset 0 0 0 1px rgba(0, 212, 255, 0.2);
 }
 
-/* Grids */
+/* ── Grids ────────────────────────────────────────────────────── */
 .gridTop {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -66,7 +64,7 @@
   }
 }
 
-/* Cards */
+/* ── Cards ────────────────────────────────────────────────────── */
 .chartCard, .infoCard {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
@@ -74,25 +72,80 @@
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
+  transition: border-color var(--transition-fast);
+}
+
+.chartCard:hover, .infoCard:hover {
+  border-color: rgba(0, 212, 255, 0.15);
 }
 
 .chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .cardTitle {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chartLegend {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
 }
 
 .chartWrapper {
   flex: 1;
-  min-height: 300px;
+  min-height: 280px;
   width: 100%;
 }
 
-/* Tooltip (Recharts Custom) */
+/* ── Chart Skeleton ───────────────────────────────────────────── */
+.chartSkeletonWrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: var(--space-2);
+}
+
+.chartSkeletonBars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+}
+
+.chartSkeletonBar {
+  flex: 1;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+/* ── Tooltip (Recharts custom) ────────────────────────────────── */
 .chartTooltip {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
@@ -116,12 +169,12 @@
   gap: var(--space-4);
 }
 
-/* Model Info List */
+/* ── Model Info List ──────────────────────────────────────────── */
 .infoList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  margin-top: var(--space-6);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .infoItem {
@@ -143,6 +196,9 @@
 }
 
 .infoValue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
@@ -153,24 +209,32 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   background: var(--color-bg-tertiary);
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
 }
 
-.statusActive {
-  color: var(--color-accent-success);
+.statusActive { color: var(--color-accent-success); }
+.statusError  { color: var(--color-accent-danger); }
+
+.statusPulse {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-glow 2s infinite;
 }
 
-.statusError {
-  color: var(--color-accent-danger);
-}
-
-/* Loading & Empty States */
+/* ── Loading & Empty States ───────────────────────────────────── */
 .loadingState, .emptyState {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-3);
   height: 100%;
+  min-height: 200px;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
+  text-align: center;
 }

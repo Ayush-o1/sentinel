@@ -4,11 +4,9 @@ SENTINEL — Prediction Pydantic Schemas
 
 import uuid
 from datetime import datetime
-from decimal import Decimal
-from typing import List, Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
-
 
 # ---------------------------------------------------------------------------
 # Enums / Literals
@@ -32,7 +30,7 @@ class SuspiciousToken(BaseModel):
 class PredictionExplanation(BaseModel):
     """The explainability output for a single prediction."""
     summary: str
-    suspicious_tokens: List[SuspiciousToken]
+    suspicious_tokens: list[SuspiciousToken]
     risk_level: RiskLevel
 
 
@@ -91,7 +89,7 @@ class PredictionSummary(BaseModel):
     risk_level: RiskLevel
     message_type: MessageType
     # Truncated preview of the original message (first 120 chars)
-    text_preview: Optional[str] = None
+    text_preview: str | None = None
     created_at: datetime
 
 
@@ -101,4 +99,4 @@ class PredictionDetail(PredictionSummary):
     original_text: str
     processed_text: str
     explanation: str
-    suspicious_tokens: List[SuspiciousToken]
+    suspicious_tokens: list[SuspiciousToken]

@@ -1,0 +1,24 @@
+# SENTINEL Backend — Ruff Configuration
+# Reference: https://docs.astral.sh/ruff/
+
+target-version = "py311"
+line-length = 100
+
+# Exclude standalone ML scripts (sys.path manipulation before imports is intentional)
+exclude = [
+    "app/ml/train.py",
+    "app/ml/explore.py",
+]
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes (unused imports, undefined names)
+    "I",   # isort (import ordering)
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+]
+ignore = [
+    "B008",  # Do not perform function calls in argument defaults (FastAPI DI pattern)
+    "E501",  # Line too long — handled by formatter
+]

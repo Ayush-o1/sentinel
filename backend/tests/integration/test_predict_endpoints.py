@@ -1,19 +1,13 @@
 import pytest
 from httpx import AsyncClient
 
+from tests.conftest import get_auth_headers
+
+
+@pytest.mark.asyncio
 class TestPredictionEndpoints:
     async def _get_auth_headers(self, client: AsyncClient) -> dict[str, str]:
-        # Register and login to get token
-        email = "predtest@sentinel.dev"
-        password = "TestPassword1!"
-        await client.post("/api/v1/auth/register", json={
-            "email": email, "password": password, "full_name": "Test User"
-        })
-        resp = await client.post("/api/v1/auth/login", json={
-            "email": email, "password": password
-        })
-        token = resp.json().get("access_token")
-        return {"Authorization": f"Bearer {token}"}
+        return await get_auth_headers(client, "predtest@sentinel.dev", "TestPassword1!")
 
     @pytest.mark.asyncio
     async def test_predict_spam(self, client: AsyncClient):

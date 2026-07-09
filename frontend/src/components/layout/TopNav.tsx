@@ -19,16 +19,22 @@ export default function TopNav() {
   return (
     <header className={styles.topnav}>
       <div className={styles.pageInfo}>
-        <h1 className={styles.pageTitle}>{pageInfo.title}</h1>
+        <h1 className={styles.pageTitle} aria-live="polite" aria-atomic="true">
+          {pageInfo.title}
+        </h1>
         {pageInfo.subtitle && (
           <p className={styles.pageSubtitle}>{pageInfo.subtitle}</p>
         )}
       </div>
 
       <div className={styles.actions}>
-        {/* Status indicator */}
-        <div className={styles.statusBadge}>
-          <span className={styles.statusDot} />
+        {/* System status indicator */}
+        <div
+          className={styles.statusBadge}
+          role="status"
+          aria-label="System status: online"
+        >
+          <span className={styles.statusDot} aria-hidden="true" />
           <span className={styles.statusText}>System Online</span>
         </div>
       </div>

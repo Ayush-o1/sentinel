@@ -12,19 +12,18 @@ It coordinates between security utilities, repositories, and models
 without containing any direct database queries.
 """
 
-import uuid
 
 import structlog
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
+from app.core.exceptions import AuthenticationError, ConflictError
 from app.core.security import (
     create_access_token,
     generate_refresh_token,
     hash_password,
     verify_password,
 )
-from app.core.config import settings
-from app.core.exceptions import AuthenticationError, ConflictError
 from app.models.user import User
 from app.repositories.token_repository import TokenRepository
 from app.repositories.user_repository import UserRepository
@@ -56,7 +55,7 @@ class AuthService:
         email_normalized = request.email.lower().strip()
 
         if await self._user_repo.email_exists(email_normalized):
-            raise ConflictError(f"An account with this email address already exists.")
+            raise ConflictError("An account with this email address already exists.")
 
         user = User(
             email=email_normalized,
@@ -109,6 +108,16 @@ class AuthService:
         await self._token_repo.create(user_id=user.id, raw_token=raw_refresh_token)
 
         logger.info("sentinel.auth.login_success", user_id=str(user.id))
+
+        # Opportunistically purge expired tokens to keep the table clean.
+        # This runs after issuing tokens so it doesn't affect login latency.
+        try:
+            purged = await self._token_repo.purge_expired()
+            if purged:
+                logger.debug("sentinel.auth.tokens_purged", count=purged)
+        except Exception:
+            # Non-critical — never fail login due to cleanup errors
+            pass
 
         token_response = TokenResponse(
             access_token=access_token,

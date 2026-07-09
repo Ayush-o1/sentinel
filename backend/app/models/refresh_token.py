@@ -3,17 +3,17 @@ SENTINEL — RefreshToken ORM Model
 """
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, text, Uuid as UUID
+from sqlalchemy import DateTime, ForeignKey, String
+from sqlalchemy import Uuid as UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
-if __name__ != "__main__":
-    from typing import Optional, TYPE_CHECKING
-    if TYPE_CHECKING:
-        from app.models.user import User
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class RefreshToken(Base):
@@ -24,8 +24,8 @@ class RefreshToken(Base):
     - Only the SHA-256 hash is stored — raw tokens are never persisted.
     - revoked_at enables graceful invalidation without deleting records
       (useful for audit trails of logout events).
-    - On refresh token rotation, the old record is deleted (or revoked_at
-      is set) and a new record is inserted.
+    - On refresh token rotation, the old record is revoked and a new
+      record is inserted.
     """
 
     __tablename__ = "refresh_tokens"
@@ -54,10 +54,10 @@ class RefreshToken(Base):
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
-    revoked_at: Mapped[Optional[datetime]] = mapped_column(
+    revoked_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
         default=None,
@@ -70,7 +70,7 @@ class RefreshToken(Base):
     @property
     def is_valid(self) -> bool:
         """True if the token has not expired and has not been revoked."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return self.revoked_at is None and self.expires_at > now
 
     def __repr__(self) -> str:

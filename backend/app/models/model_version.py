@@ -3,14 +3,15 @@ SENTINEL — ModelVersion ORM Model
 """
 
 import uuid
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, Integer, Numeric, String, text, Uuid as UUID
+from sqlalchemy import Boolean, Date, DateTime, Integer, Numeric, String
+from sqlalchemy import Uuid as UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
-from typing import Optional, TYPE_CHECKING, List
 if TYPE_CHECKING:
     from app.models.prediction import Prediction
 
@@ -64,12 +65,12 @@ class ModelVersion(Base):
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
     # Relationship
-    predictions: Mapped[List["Prediction"]] = relationship(
+    predictions: Mapped[list["Prediction"]] = relationship(
         "Prediction", back_populates="model_version"
     )
 

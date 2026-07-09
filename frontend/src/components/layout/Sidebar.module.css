@@ -10,6 +10,11 @@
   flex-direction: column;
   z-index: 100;
   overflow: hidden;
+  transition: box-shadow var(--transition-normal);
+}
+
+.sidebar:hover {
+  box-shadow: 4px 0 24px rgba(0, 212, 255, 0.04);
 }
 
 /* Logo */
@@ -71,6 +76,18 @@
 
 .navItemActive {
   color: var(--color-accent-primary);
+}
+
+/* Left accent line on active item */
+.navItemActive::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  background: var(--gradient-primary);
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
 }
 
 .navIndicator {
@@ -167,7 +184,7 @@
   background: rgba(255, 51, 102, 0.1);
 }
 
-/* Mobile: Hide sidebar, show bottom nav */
+/* Mobile: Bottom nav */
 @media (max-width: 768px) {
   .sidebar {
     top: auto;
@@ -186,16 +203,33 @@
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    padding: 0 var(--space-4);
+    padding: 0 var(--space-2);
     flex: 1;
+    gap: 0;
   }
 
   .navItem {
     flex-direction: column;
     gap: var(--space-1);
-    padding: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     font-size: var(--font-size-xs);
+    flex: 1;
+    justify-content: center;
   }
 
-  .footer { display: none; }
+  /* Remove left accent on mobile */
+  .navItemActive::before { display: none; }
+
+  .footer {
+    padding: 0 var(--space-3);
+    border-top: none;
+    border-left: 1px solid var(--color-border-subtle);
+  }
+
+  .userInfo { display: none; }
+
+  .logoutBtn {
+    width: 44px;
+    height: 44px;
+  }
 }

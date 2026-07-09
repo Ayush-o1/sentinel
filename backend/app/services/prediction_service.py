@@ -21,9 +21,9 @@ from app.core.exceptions import MLInferenceError
 from app.models.prediction import Prediction
 from app.repositories.prediction_repository import PredictionRepository
 from app.schemas.prediction import (
-    PredictRequest,
     PredictionExplanation,
     PredictionResponse,
+    PredictRequest,
     SuspiciousToken,
 )
 
@@ -127,7 +127,7 @@ class PredictionService:
 
         except Exception as e:
             logger.exception("sentinel.prediction.inference_failed", error=str(e))
-            raise MLInferenceError()
+            raise MLInferenceError() from e
 
         # Step 3: Compute derived fields
         risk_level = _compute_risk_level(confidence, verdict)

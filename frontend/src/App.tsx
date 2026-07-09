@@ -27,7 +27,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
-  const { setUser, setLoading, isAuthenticated, isLoading } = useAuthStore();
+  const { setUser, isAuthenticated, isLoading } = useAuthStore();
 
   /**
    * Session Restoration
@@ -51,7 +51,7 @@ export default function App() {
     };
 
     restoreSession();
-  }, [setUser, setLoading]);
+  }, [setUser]);
 
   // Show a minimal loading screen while restoring session
   if (isLoading) {

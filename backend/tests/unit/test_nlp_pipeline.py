@@ -5,7 +5,6 @@ These tests verify each stage of the pipeline in isolation.
 No ML model or database is required.
 """
 
-import pytest
 
 from app.ml.pipeline import preprocess
 

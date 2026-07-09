@@ -10,7 +10,7 @@ Design:
 """
 
 import uuid
-from typing import Generic, List, Optional, Type, TypeVar, Union
+from typing import Generic, TypeVar
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,18 +30,18 @@ class BaseRepository(Generic[ModelT]):
                 super().__init__(User, db)
     """
 
-    def __init__(self, model: Type[ModelT], db: AsyncSession) -> None:
+    def __init__(self, model: type[ModelT], db: AsyncSession) -> None:
         self._model = model
         self._db = db
 
-    async def get_by_id(self, record_id: Union[uuid.UUID, str]) -> Optional[ModelT]:
+    async def get_by_id(self, record_id: uuid.UUID | str) -> ModelT | None:
         """Fetch a single record by primary key. Returns None if not found."""
         if isinstance(record_id, str):
             record_id = uuid.UUID(record_id)
         result = await self._db.get(self._model, record_id)
         return result
 
-    async def get_all(self, limit: int = 100, offset: int = 0) -> List[ModelT]:
+    async def get_all(self, limit: int = 100, offset: int = 0) -> list[ModelT]:
         """Fetch all records with pagination."""
         result = await self._db.execute(
             select(self._model).limit(limit).offset(offset)

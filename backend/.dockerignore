@@ -1,0 +1,47 @@
+# SENTINEL Backend — Docker Build Context Exclusions
+#
+# These patterns are excluded from the Docker build context sent to the daemon.
+# This significantly speeds up builds by avoiding large directories that
+# aren't needed inside the image.
+
+# Python virtual environment (can be 500MB+)
+.venv/
+venv/
+env/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Test infrastructure
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+*.xml
+
+# Development tooling
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# ML training data (large; not needed at runtime — model file is enough)
+app/ml/data/
+app/ml/reports/
+app/ml/explore.py
+app/ml/train.py
+
+# Editor / OS artifacts
+.git/
+.gitignore
+.env*
+*.md
+*.log
+
+# Alembic migration history (binary diffs not needed in image)
+# NOTE: Keep alembic.ini and the /migrations folder — needed for startup migrations

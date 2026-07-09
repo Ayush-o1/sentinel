@@ -7,15 +7,14 @@ DELETE /api/v1/predictions/{id}         — Delete a prediction
 """
 
 import math
-from typing import Optional
 import uuid
 
 from fastapi import APIRouter, Query, status
 
 from app.core.dependencies import CurrentUser, DbSession
-from app.core.exceptions import AuthorizationError, NotFoundError
+from app.core.exceptions import NotFoundError
 from app.repositories.prediction_repository import PredictionRepository
-from app.schemas.common import MessageResponse, PaginatedResponse
+from app.schemas.common import PaginatedResponse
 from app.schemas.prediction import PredictionDetail, PredictionSummary
 
 router = APIRouter()
@@ -31,8 +30,8 @@ async def get_history(
     db: DbSession,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    verdict: Optional[str] = Query(default=None, pattern="^(SPAM|HAM)$"),
-    message_type: Optional[str] = Query(default=None, pattern="^(sms|email|text)$"),
+    verdict: str | None = Query(default=None, pattern="^(SPAM|HAM)$"),
+    message_type: str | None = Query(default=None, pattern="^(sms|email|text)$"),
     sort_by: str = Query(default="created_at", pattern="^(created_at|confidence)$"),
     sort_order: str = Query(default="desc", pattern="^(asc|desc)$"),
 ) -> PaginatedResponse[PredictionSummary]:

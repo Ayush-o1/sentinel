@@ -15,11 +15,10 @@ Design principles:
 import hashlib
 import secrets
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import jwt
-from jwt.exceptions import InvalidTokenError as JWTError
 from passlib.context import CryptContext
 
 from app.core.config import settings
@@ -60,7 +59,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # JWT Access Tokens
 # ---------------------------------------------------------------------------
 
-def create_access_token(subject: str, additional_claims: Optional[dict[str, Any]] = None) -> str:
+def create_access_token(subject: str, additional_claims: dict[str, Any] | None = None) -> str:
     """
     Create a signed JWT access token.
 
@@ -71,7 +70,7 @@ def create_access_token(subject: str, additional_claims: Optional[dict[str, Any]
     Returns:
         A signed JWT string.
     """
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     expire = now + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     payload: dict[str, Any] = {

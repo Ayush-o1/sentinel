@@ -13,7 +13,7 @@ const NAV_ITEMS = [
     path: '/dashboard',
     label: 'Overview',
     icon: (
-      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
         <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
         <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
       </svg>
@@ -23,7 +23,7 @@ const NAV_ITEMS = [
     path: '/analyze',
     label: 'Analyze',
     icon: (
-      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         <path d="M11 8v6M8 11h6"/>
       </svg>
@@ -33,7 +33,7 @@ const NAV_ITEMS = [
     path: '/history',
     label: 'History',
     icon: (
-      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/>
       </svg>
     ),
@@ -42,7 +42,7 @@ const NAV_ITEMS = [
     path: '/analytics',
     label: 'Analytics',
     icon: (
-      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M3 3v18h18"/><path d="m7 16 4-4 4 4 4-4"/>
       </svg>
     ),
@@ -63,11 +63,11 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={styles.sidebar} aria-label="Application sidebar">
       {/* Logo */}
       <div className={styles.logo}>
         <div className={styles.logoIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"
               fill="url(#logoGrad)" />
             <path d="M9 12l2 2 4-4" stroke="#0a0e1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -83,7 +83,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className={styles.nav}>
+      <nav className={styles.nav} aria-label="Main navigation">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.path}
@@ -112,7 +112,7 @@ export default function Sidebar() {
       {/* User & Logout */}
       <div className={styles.footer}>
         <div className={styles.userInfo}>
-          <div className={styles.avatar}>
+          <div className={styles.avatar} aria-hidden="true">
             {user?.full_name?.[0]?.toUpperCase() ?? 'U'}
           </div>
           <div className={styles.userMeta}>
@@ -120,8 +120,13 @@ export default function Sidebar() {
             <span className={styles.userRole}>{user?.role}</span>
           </div>
         </div>
-        <button className={styles.logoutBtn} onClick={handleLogout} title="Logout">
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+        <button
+          className={styles.logoutBtn}
+          onClick={handleLogout}
+          title="Logout"
+          aria-label="Logout from SENTINEL"
+        >
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
           </svg>

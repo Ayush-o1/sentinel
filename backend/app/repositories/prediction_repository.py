@@ -3,7 +3,6 @@ SENTINEL — Prediction Repository
 """
 
 import uuid
-from typing import List, Optional, Tuple
 
 from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +19,7 @@ class PredictionRepository(BaseRepository[Prediction]):
 
     async def get_by_id_for_user(
         self, prediction_id: uuid.UUID, user_id: uuid.UUID
-    ) -> Optional[Prediction]:
+    ) -> Prediction | None:
         """
         Fetch a prediction ensuring it belongs to the given user.
 
@@ -40,11 +39,11 @@ class PredictionRepository(BaseRepository[Prediction]):
         user_id: uuid.UUID,
         page: int = 1,
         page_size: int = 20,
-        verdict_filter: Optional[str] = None,
-        message_type_filter: Optional[str] = None,
+        verdict_filter: str | None = None,
+        message_type_filter: str | None = None,
         sort_by: str = "created_at",
         sort_order: str = "desc",
-    ) -> Tuple[List[Prediction], int]:
+    ) -> tuple[list[Prediction], int]:
         """
         Fetch paginated predictions for a user with optional filters.
 

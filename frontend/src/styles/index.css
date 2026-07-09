@@ -1,11 +1,11 @@
 /* =============================================================================
    SENTINEL — Global CSS Design System
-   
+
    This file defines the complete design token system via CSS Custom Properties.
    All component styles reference these tokens — never use raw values.
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ---------------------------------------------------------------------------
    Design Tokens
@@ -17,6 +17,7 @@
   --color-bg-tertiary:     #162040;
   --color-bg-elevated:     #1a2a50;
   --color-bg-overlay:      rgba(10, 14, 26, 0.85);
+  --color-bg-glass:        rgba(15, 22, 41, 0.72);
 
   /* Colors — Accent */
   --color-accent-primary:   #00d4ff;
@@ -29,7 +30,7 @@
   /* Colors — Text */
   --color-text-primary:    #e2e8f0;
   --color-text-secondary:  #94a3b8;
-  --color-text-muted:      #475569;
+  --color-text-muted:      #64748b;   /* improved from #475569 — WCAG AA on dark bg */
   --color-text-inverse:    #0a0e1a;
 
   /* Colors — Border */
@@ -224,7 +225,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .glass {
-  background: rgba(15, 22, 41, 0.7);
+  background: var(--color-bg-glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--color-border);
@@ -233,6 +234,60 @@ h1, h2, h3, h4, h5, h6 {
 .glow-cyan { box-shadow: var(--glow-cyan); }
 .glow-danger { box-shadow: var(--glow-danger); }
 .glow-success { box-shadow: var(--glow-success); }
+
+/* ---------------------------------------------------------------------------
+   Skeleton Loading Utility
+   --------------------------------------------------------------------------- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 25%,
+    var(--color-bg-elevated) 50%,
+    var(--color-bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+  height: 1em;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   Boot Screen
+   --------------------------------------------------------------------------- */
+.sentinel-boot-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  background: var(--color-bg-primary);
+}
+
+.sentinel-boot-logo {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.15em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: flicker 4s infinite;
+}
+
+.sentinel-boot-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: spin-smooth 0.8s linear infinite;
+}
 
 /* ---------------------------------------------------------------------------
    Keyframe Animations
@@ -267,6 +322,11 @@ h1, h2, h3, h4, h5, h6 {
   to   { transform: rotate(360deg); }
 }
 
+@keyframes spin-smooth {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   92%       { opacity: 1; }
@@ -278,6 +338,25 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes matrix-rain {
   from { background-position: 0 0; }
   to   { background-position: 0 100vh; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes bounce-in {
+  0%   { opacity: 0; transform: scale(0.9) translateY(8px); }
+  60%  { transform: scale(1.02) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes glitch {
+  0%, 100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  20%       { clip-path: inset(20% 0 60% 0); transform: translateX(-4px); }
+  40%       { clip-path: inset(60% 0 20% 0); transform: translateX(4px); }
+  60%       { clip-path: inset(40% 0 40% 0); transform: translateX(-2px); }
+  80%       { clip-path: inset(80% 0 5% 0);  transform: translateX(2px); }
 }
 
 /* Respect reduced-motion preference */

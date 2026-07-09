@@ -10,11 +10,11 @@ from fastapi import APIRouter, Query
 
 from app.core.dependencies import CurrentUser, DbSession
 from app.repositories.analytics_repository import AnalyticsRepository
-from app.repositories.prediction_repository import PredictionRepository
 from app.schemas.analytics import (
     AnalyticsSummary,
     ConfidenceBucket,
     ConfidenceDistributionResponse,
+    TimelineDataPoint,
     TimelineResponse,
 )
 
@@ -28,26 +28,12 @@ router = APIRouter()
 )
 async def get_summary(current_user: CurrentUser, db: DbSession) -> AnalyticsSummary:
     repo = AnalyticsRepository(db)
+
+    # Single DB round-trip for all aggregate stats (see analytics_repository)
     data = await repo.get_summary(current_user.id)
 
-    # Get most common spam tokens from recent predictions
-    # (simplified: from prediction JSONB suspicious_tokens — aggregation done in Python for MVP)
-    from sqlalchemy import select
-    from app.models.prediction import Prediction
-
-    spam_preds_result = await db.execute(
-        select(Prediction.suspicious_tokens)
-        .where(Prediction.user_id == current_user.id, Prediction.verdict == "SPAM")
-        .limit(100)
-    )
-    token_counts: dict = {}
-    for (tokens,) in spam_preds_result.all():
-        for t in (tokens or []):
-            token = t.get("token", "")
-            if token:
-                token_counts[token] = token_counts.get(token, 0) + 1
-
-    top_tokens = sorted(token_counts, key=token_counts.get, reverse=True)[:5]  # type: ignore
+    # Top spam tokens — Python-side from last 100 SPAM predictions
+    top_tokens = await repo.get_top_spam_tokens(current_user.id, limit=5)
 
     return AnalyticsSummary(
         **data,
@@ -71,7 +57,6 @@ async def get_timeline(
     repo = AnalyticsRepository(db)
     data = await repo.get_timeline(current_user.id, days=days)
 
-    from app.schemas.analytics import TimelineDataPoint
     return TimelineResponse(
         period=period,
         data=[TimelineDataPoint(**point) for point in data],
@@ -87,28 +72,10 @@ async def get_confidence_distribution(
     current_user: CurrentUser,
     db: DbSession,
 ) -> ConfidenceDistributionResponse:
-    from sqlalchemy import select, func
-    from app.models.prediction import Prediction
+    # DB-side aggregation — no Python-level row loading (see analytics_repository)
+    repo = AnalyticsRepository(db)
+    buckets_data = await repo.get_confidence_distribution(current_user.id)
 
-    result = await db.execute(
-        select(Prediction.confidence).where(Prediction.user_id == current_user.id)
+    return ConfidenceDistributionResponse(
+        buckets=[ConfidenceBucket(**b) for b in buckets_data]
     )
-    confidences = [float(row[0]) for row in result.all()]
-
-    # Build buckets manually for clarity and control
-    buckets_def = [
-        ("0.5–0.6", 0.5, 0.6),
-        ("0.6–0.7", 0.6, 0.7),
-        ("0.7–0.8", 0.7, 0.8),
-        ("0.8–0.9", 0.8, 0.9),
-        ("0.9–1.0", 0.9, 1.01),
-    ]
-    buckets = [
-        ConfidenceBucket(
-            range=label,
-            count=sum(1 for c in confidences if low <= c < high),
-        )
-        for label, low, high in buckets_def
-    ]
-
-    return ConfidenceDistributionResponse(buckets=buckets)
