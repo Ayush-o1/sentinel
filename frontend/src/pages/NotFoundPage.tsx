@@ -2,7 +2,6 @@
  * SENTINEL — 404 Not Found Page
  */
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import styles from './NotFoundPage.module.css';
 
 export default function NotFoundPage() {
@@ -14,12 +13,7 @@ export default function NotFoundPage() {
       {/* Scan line effect */}
       <div className={styles.scanLine} aria-hidden="true" />
 
-      <motion.div
-        className={styles.content}
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-      >
+      <div className={`${styles.content} ${styles.animateIn}`}>
         {/* Error code */}
         <div className={styles.codeWrapper} aria-hidden="true">
           <span className={styles.code}>4</span>
@@ -85,7 +79,7 @@ export default function NotFoundPage() {
           <br />
           <span className={styles.terminalError}>→ 404 Not Found — No route matched</span>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
